@@ -65,11 +65,18 @@ dialog{max-height:calc(100dvh - 32px);overflow-y:auto;max-width:500px}dialog>p{m
 #problem.pin-on .pin-stage{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;margin:0 -16px;padding:0 16px}
 #problem.pin-on .pin-stage .section-heading{margin-bottom:14px}
 #problem.pin-on .timeline{overflow:visible;scroll-snap-type:none;margin:0;padding:6px 0 10px;will-change:transform}
-#problem.pin-on .t-row{flex:0 0 84vw}
+#problem.pin-on .t-row{flex:0 0 76vw}
 #problem.pin-on .t-row:last-of-type{padding-right:16px;box-sizing:content-box}
 #problem.pin-on .swipe-hint{margin-bottom:10px;transition:opacity .2s}#problem.pin-on .problem-note{margin:18px 0 0}#problem.pin-on .actions{display:none}
 }
 </style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "yj713lrn7z");
+</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -117,22 +124,23 @@ const sticky=document.querySelector('.sticky-cta');if('IntersectionObserver'in w
 const section=document.getElementById('problem');if(!section)return;
 const wrap=section.querySelector('.pin-wrap'),stage=section.querySelector('.pin-stage'),track=section.querySelector('.timeline'),hint=section.querySelector('.swipe-hint');
 const small=matchMedia('(max-width:760px)'),calm=matchMedia('(prefers-reduced-motion:reduce)');
-let distance=0,ticking=false;
-function reset(){section.classList.remove('pin-on');wrap.style.height='';track.style.transform='';if(hint)hint.style.opacity='';distance=0}
+let distance=0,scrollSpan=0,ticking=false;
+function reset(){section.classList.remove('pin-on');wrap.style.height='';track.style.transform='';if(hint)hint.style.opacity='';distance=scrollSpan=0}
 function measure(){
   if(!small.matches||calm.matches){reset();return}
   section.classList.add('pin-on');
   wrap.style.height='';track.style.transform='';
   distance=Math.max(0,track.scrollWidth-stage.clientWidth+16);
+  scrollSpan=Math.round(distance*0.55);
   if(!distance){reset();return}
-  wrap.style.height=stage.offsetHeight+distance+'px';
+  wrap.style.height=stage.offsetHeight+scrollSpan+'px';
   update();
 }
 function update(){
   ticking=false;
   if(!distance)return;
   const top=wrap.getBoundingClientRect().top;
-  const progress=Math.min(1,Math.max(0,-top/distance));
+  const progress=Math.min(1,Math.max(0,-top/scrollSpan));
   track.style.transform='translate3d('+(-progress*distance).toFixed(2)+'px,0,0)';if(hint)hint.style.opacity=progress>.04?'0':'1';
 }
 function onScroll(){if(!ticking&&distance){ticking=true;requestAnimationFrame(update)}}
